@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>co.ufps.refupet</groupId>
+        <artifactId>refupet</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>refupet-application</artifactId>
+
+    <dependencies>
+        <!-- La capa de aplicación solo conoce al dominio -->
+        <dependency>
+            <groupId>co.ufps.refupet</groupId>
+            <artifactId>refupet-domain</artifactId>
+        </dependency>
+        <!--
+          Solo APIs estándar de Jakarta (sin Quarkus ni HTTP), con versión gestionada por el BOM:
+          anotaciones CDI (@ApplicationScoped, @Inject) y @Transactional para los casos de uso.
+          Fuera del contenedor son metadatos sin efecto: las pruebas en memoria no cambian.
+        -->
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Indexa los handlers/servicios para que Quarkus los descubra como beans -->
+            <plugin>
+                <groupId>io.smallrye</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

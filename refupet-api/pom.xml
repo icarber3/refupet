@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>co.ufps.refupet</groupId>
+        <artifactId>refupet</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <!--
+      Módulo ejecutable de Quarkus (equivalente a streamflix-api):
+      contiene el paquete co.ufps.refupet.api (recursos REST) y la configuración de ejecución.
+      Depende de application para invocar los casos de uso; infrastructure aporta en tiempo
+      de ejecución los adaptadores JPA que Quarkus inyecta detrás de los contratos del dominio.
+    -->
+    <artifactId>refupet-api</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <!-- REST (Jakarta REST) + JSON con Jackson, como en Streamflix -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
+        </dependency>
+        <!-- CDI (ArC) -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+
+        <!-- Módulos de la arquitectura -->
+        <dependency>
+            <groupId>co.ufps.refupet</groupId>
+            <artifactId>refupet-domain</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>co.ufps.refupet</groupId>
+            <artifactId>refupet-application</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>co.ufps.refupet</groupId>
+            <artifactId>refupet-infrastructure</artifactId>
+        </dependency>
+
+        <!-- Pruebas de integración con el contenedor de Quarkus (@QuarkusTest) -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Peticiones HTTP en las pruebas de API (versión gestionada por el BOM de Quarkus) -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Configuración recomendada por Quarkus para @QuarkusTest -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

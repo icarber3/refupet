@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>co.ufps.refupet</groupId>
+        <artifactId>refupet</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>refupet-infrastructure</artifactId>
+
+    <dependencies>
+        <!-- Implementa los puertos (repositorios) definidos en el dominio -->
+        <dependency>
+            <groupId>co.ufps.refupet</groupId>
+            <artifactId>refupet-domain</artifactId>
+        </dependency>
+        <!-- Capa más externa: ensambla los handlers (composition root). Sin ciclos: application no conoce infrastructure -->
+        <dependency>
+            <groupId>co.ufps.refupet</groupId>
+            <artifactId>refupet-application</artifactId>
+        </dependency>
+
+        <!-- Persistencia (como en Streamflix): Jakarta Persistence + Hibernate ORM gestionado por Quarkus -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm</artifactId>
+        </dependency>
+        <!-- Driver JDBC MySQL Connector/J (mismo motor y driver que Streamflix) -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-mysql</artifactId>
+        </dependency>
+        <!-- CDI (ArC) -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Indexa entidades JPA y adaptadores para que Quarkus los descubra -->
+            <plugin>
+                <groupId>io.smallrye</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+            </plugin>
+            <!-- JBoss LogManager (traído por Quarkus) debe fijarse antes de que JUL se inicialice -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
